@@ -12,23 +12,23 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
-        'email',
+        'udomain',
         'password',
-        'role',
+        'face_image_path',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    /* ======================
-       RELATIONSHIPS
-    ====================== */
+     protected static function booted()
+    {
+        static::created(function ($user) {
+            Taker::create([
+                'user_id' => $user->id,
+            ]);
+        });
+    }
 
     // User booking locker
     public function lockerSessions()
@@ -36,35 +36,9 @@ class User extends Authenticatable
         return $this->hasMany(LockerSession::class);
     }
 
-    // Courier adding items
-    public function addedItems()
-    {
-        return $this->hasMany(LockerItem::class, 'added_by');
-    }
-
-    // Face-recognition taker (optional)
-    public function takerProfile()
-    {
-        return $this->hasOne(Taker::class);
-    }
-
-    // Notifications
+        // Notifications
     public function notifications()
     {
         return $this->hasMany(Notification::class);
-    }
-
-    /* ======================
-       HELPERS
-    ====================== */
-
-    public function isUser()
-    {
-        return $this->role === 'user';
-    }
-
-    public function isCourier()
-    {
-        return $this->role === 'courier';
     }
 }

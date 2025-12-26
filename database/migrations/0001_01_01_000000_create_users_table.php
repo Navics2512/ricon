@@ -8,18 +8,10 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-
+            $table->string('udomain')->unique();
             $table->string('password');
-
-            // ROLE SYSTEM
-            $table->enum('role', ['user', 'courier'])->default('user');
-
-            // OPTIONAL
-            $table->rememberToken();
+            $table->text('face_image_path');
             $table->timestamps();
         });
     }
