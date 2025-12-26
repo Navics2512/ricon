@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\LockerItem;
+use App\Models\LockerSession;
+use App\Observers\LockerItemObserver;
+use App\Observers\LockerSessionObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        LockerItem::observe(LockerItemObserver::class);
+        LockerSession::observe(LockerSessionObserver::class);
     }
 }

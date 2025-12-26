@@ -8,3 +8,8 @@ use App\Http\Controllers\DashboardController;
 // });
 
 Route::resource('/', DashboardController::class)->only(['index']);
+
+Route::get('/login', function () {
+    return view('login.login');
+});
+

@@ -14,8 +14,9 @@ return new class extends Migration {
                   ->cascadeOnDelete();
 
             $table->foreignId('locker_item_id')
+                ->nullable()
                   ->constrained('locker_items')
-                  ->cascadeOnDelete();
+                  ->nullOnDelete();
 
             $table->string('title');
             $table->boolean('is_read')->default(false);

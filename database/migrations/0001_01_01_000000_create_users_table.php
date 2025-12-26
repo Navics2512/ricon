@@ -10,16 +10,8 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-
+            $table->string('udomain')->unique();
             $table->string('password');
-
-            // ROLE SYSTEM
-            $table->enum('role', ['user', 'courier'])->default('user');
-
-            // OPTIONAL
-            $table->rememberToken();
             $table->timestamps();
         });
     }
