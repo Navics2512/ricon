@@ -68,7 +68,7 @@ class LockerBookingController extends Controller
         });
 
         return redirect()
-            ->route('booking.index')
+            ->route('dashboard')
             ->with('success', 'Loker berhasil disewa');
     }
 
@@ -138,4 +138,30 @@ class LockerBookingController extends Controller
             ->route('dashboard')
             ->with('success', 'Berhasil menambahkan user untuk mengambil barang');
     }
+
+    public function releaseLocker(LockerSession $booking)
+    {
+        // Pastikan yang melepas adalah pemilik booking
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        DB::transaction(function () use ($booking) {
+
+            // 1. Expire locker session
+            $booking->update([
+                'status' => 'expired',
+            ]);
+
+            // 2. Kembalikan locker jadi available
+            $booking->locker()->update([
+                'status' => 'available',
+            ]);
+        });
+
+        return redirect()
+            ->route('dashboard')
+            ->with('success', 'Loker berhasil dilepaskan. Anda dapat memesan loker kembali.');
+    }
+
 }
