@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistoryController;
@@ -17,6 +18,7 @@ Route::get('/login', function () {
     return view('login.login');
 })->name('login');
 
+
 // Login action (POST)
 Route::post('/login', function (\Illuminate\Http\Request $request) {
     $credentials = $request->only('udomain', 'password');
@@ -28,6 +30,9 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
 
     return back()->with('error', 'Udomain atau password salah')->withInput();
 });
+
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware('auth')->group(function() {

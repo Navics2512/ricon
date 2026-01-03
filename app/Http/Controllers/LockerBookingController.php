@@ -40,86 +40,8 @@ class LockerBookingController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->vaildate([
-        //     'locker_id'
-        // ])
-        // dd($request);
-        //   DB::transaction(function () use ($request) {
 
-        //     //Lock row avoid double booking
-        //     $locker = Locker::where('id', $request->locker_id)
-        //         ->where('status', 'available')
-        //         ->lockForUpdate()
-        //         ->firstOrFail();
-
-        //     //Create locker session
-        //     $session = LockerSession::create([
-        //         'locker_id' => $locker->id,
-        //         'user_id'   => Auth::id(),
-        //         // 'user_id'   => 1,
-        //         'status'    => 'active',
-        //     ]);
-
-        //     //Create locker item
-        //     $lockerItem = LockerItem::create([
-        //         'locker_session_id'   => $session->id, // FK ke locker_sessions
-        //         'item_name'   => $request->item_name,
-        //         'item_detail' => $request->item_detail,
-        //     ]);
-
-        //     //Update locker status
-        //     $locker->update([
-        //         'status' => 'occupied',
-        //     ]);
-        // });
-
-        // return redirect()
-        //     ->route('booking.index')
-        //     ->with('success', 'Loker berhasil disewa');
-
-
-        //gres test
-        // $request->validate([
-        //     'locker_id' => 'required|exists:lockers,id',
-        //     'item_name' => 'required|string',
-        // ]);
-
-        // $session = DB::transaction(function () use ($request) {
-
-        //     // Lock locker
-        //     $locker = Locker::where('id', $request->locker_id)
-        //         ->where('status', 'available')
-        //         ->lockForUpdate()
-        //         ->firstOrFail();
-
-        //     // Create session
-        //     $session = LockerSession::create([
-        //         'locker_id' => $locker->id,
-        //         'user_id'   => Auth::id(),
-        //         'status'    => 'active',
-        //     ]);
-
-        //     // CREATE ITEM PERTAMA + QR
-        //     LockerItem::create([
-        //         'locker_session_id' => $session->id,
-        //         'item_name'         => $request->item_name,
-        //         'item_detail'       => $request->item_detail,
-        //         'key'               => Str::uuid()->toString(),
-        //     ]);
-
-        //     // Update locker
-        //     $locker->update([
-        //         'status' => 'occupied',
-        //     ]);
-
-        //     return $session;
-        // });
-
-        // return redirect()
-        //     ->route('booking.show', $session->id)
-        //     ->with('show_qr', true);
-
-
+        ini_set('max_execution_time', 120);
 
         $request->validate([
             'locker_id' => 'required|exists:lockers,id',
@@ -141,6 +63,7 @@ class LockerBookingController extends Controller
             ]);
 
             // Buat Item
+            /** @var LockerItem $item */
             $item = LockerItem::create([
                 'locker_session_id' => $session->id,
                 'item_name'         => $request->item_name,
@@ -150,6 +73,7 @@ class LockerBookingController extends Controller
 
             // Panggil Flask API untuk generate QR secara fisik
             try {
+                /** @var \Illuminate\Http\Client\Response $response */
                 $response = Http::post('http://127.0.0.1:5000/generate-qr', [
                     'locker_session_id' => $session->id,
                     'item_id'           => $item->id,

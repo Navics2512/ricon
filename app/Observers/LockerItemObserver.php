@@ -59,7 +59,7 @@ class LockerItemObserver
                 ],
                 'is_read' => false
             ]);
-            $waMessage = "Halo {$user->name}, barang '{$item->item_name}' telah berhasil dimasukkan ke loker. Simpan notifikasi ini sebagai bukti.";
+            $waMessage = "Halo {$user->name}, barang '{$item->item_name}' telah berhasil dimasukkan ke loker. Silahkan buka website MyBox untuk mendownload receipt.";
             \App\Http\Controllers\NotificationController::sendWhatsApp($user->phone ?? "null", $waMessage);
         }
     }

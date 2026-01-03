@@ -52,9 +52,9 @@ class LockerSessionObserver
                 'type'    => 'session_expired',
                 'is_read' => false,
             ]);
-            if ($user && $user->phone) {
-                $msg = "NOTIFIKASI: Barang Anda di loker telah diambil oleh {$takerName}.";
-                \App\Http\Controllers\NotificationController::sendWhatsApp($user->phone, $msg);
+            if ($session->user && $session->user->phone) {
+                $msg = "Penggunaan locker {$lockerCode} telah selesai. Terima kasih!";
+                \App\Http\Controllers\NotificationController::sendWhatsApp($session->user->phone, $msg);
             }
         }
 
@@ -98,6 +98,11 @@ class LockerSessionObserver
                 ],
                 'is_read' => false,
             ]);
+
+            if ($session->user && $session->user->phone) {
+                $msg = "Barang Anda ({$itemNames}) di locker {$lockerCode} telah diambil oleh {$takenByName}.";
+                \App\Http\Controllers\NotificationController::sendWhatsApp($session->user->phone, $msg);
+            }
         }
     }
 
