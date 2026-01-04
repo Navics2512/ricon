@@ -307,16 +307,15 @@
             }
         }
 
-        // Sends the list of locker IDs to the local hardware bridge
+         // Sends the list of locker IDs to the local hardware bridge
         async function sendToLockerController(lockerIds) {
             try {
                 for (const lockerId of lockerIds) {
-                    const message = `0123_${lockerId}`;
-                    
+                    const message = 0123_${lockerId};
 
                     console.log("Sending command:", message);
 
-                    const response = await fetch('http://192.168.18.102:2200/api/send', {
+                    const response = await fetch('http://localhost:2200/api/send', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
