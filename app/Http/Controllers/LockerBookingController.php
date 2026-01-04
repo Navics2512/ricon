@@ -189,6 +189,7 @@ class LockerBookingController extends Controller
      */
     public function show(LockerSession $booking)
     {
+
         // Diambil dari kode baru
         $booking->load('items');
         return view('manage_locker', compact('booking'));

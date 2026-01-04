@@ -22,71 +22,53 @@ db_config = {
 }
 
 # --- 2. INITIALIZE MODELS ---
-app_model = FaceAnalysis(name='buffalo_l', providers=['CPUExecutionProvider'])
+# Optimized for your RTX 3050
+app_model = FaceAnalysis(name='buffalo_l', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
 app_model.prepare(ctx_id=0, det_size=(640, 640))
 qr_detector = cv2.QRCodeDetector()
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
+# Use relative paths
 QR_STORAGE_PATH = os.path.join(os.getcwd(), "public", "qrcodes")
 if not os.path.exists(QR_STORAGE_PATH):
     os.makedirs(QR_STORAGE_PATH)
 
-# --- 3. SILENCE & UTILITY ROUTES ---
+# --- 3. SILENCE & HEALTH ROUTES ---
 
 @app.route('/')
-def index():
-    """Health check route to prevent 404 when accessing root"""
-    return jsonify({"status": "API Active", "model": "buffalo_l"}), 200
+def health_check():
+    """Prevents 404 when hitting the base URL"""
+    return jsonify({
+        "status": "online",
+        "service": "Ricon Model API",
+        "device": "Asus Vivobook RTX 3050"
+    }), 200
 
 @app.route('/favicon.ico')
 def favicon():
-    """Silence browser favicon requests"""
+    """Silences the automatic browser icon request"""
     return '', 204
 
 # --- 4. FUNCTIONAL ROUTES ---
 
-@app.route('/generate', methods=['GET'])
-def generate_qr():
-    random_key = str(uuid.uuid4())[:8]
-    filename = f"qr_{random_key}.png"
-    filepath = os.path.join(QR_STORAGE_PATH, filename)
-# @app.route('/generate', methods=['GET'])
-# def generate_qr():
-#     random_key = str(uuid.uuid4())[:8]
-#     filename = f"qr_{random_key}.png"
-#     filepath = os.path.join(QR_STORAGE_PATH, filename)
-
-#     img = qrcode.make(random_key)
-#     img.save(filepath)
-
-#     return jsonify({
-#         "status": "success",
-#         "key": random_key,
-#         "qr_path": f"qrcodes/{filename}"
-#     })
-
-# gres test
 @app.route('/generate-qr', methods=['POST'])
 def generate_qr():
     data = request.json
+    if not data:
+        return jsonify({"error": "No JSON data provided"}), 400
 
-    # Pastikan mengambil locker_session_id
     ls_id = str(data.get('locker_session_id'))
     item_detail = str(data.get('item_detail') or "barang").replace(" ", "_")
     key_data = data.get('key')
 
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
-
-    # Nama folder tetap locker_{id_session}
     folder_name = f"locker_{ls_id}"
     target_folder = os.path.join(project_root, "public", "images", "qr", folder_name)
 
-
     os.makedirs(target_folder, exist_ok=True)
 
-    # Nama file unik per item detail
     file_name = f"qr_{item_detail}.png"
     file_path = os.path.join(target_folder, file_name)
 
@@ -97,8 +79,6 @@ def generate_qr():
         "status": "success",
         "relative_path": f"images/qr/{folder_name}/{file_name}"
     })
-
-
 
 @app.route('/recognize', methods=['POST'])
 def recognize():
@@ -137,5 +117,7 @@ def recognize():
         conn.close()
 
 if __name__ == '__main__':
-    # Using 0.0.0.0 allows access from your S25 Ultra if it's on the same Wi-Fi
+    # host='0.0.0.0' allows your S25 Ultra to connect via local IP
     app.run(host='0.0.0.0', port=5000, debug=False)
+
+

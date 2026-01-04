@@ -176,7 +176,7 @@
             </div>
         </div>
 
-        {{-- INFO CARDS (GABUNGAN) --}}
+        {{-- INFO CARDS (GABUNGAN)
         <div class="col-lg-6">
             <div class="card p-4 text-center">
                 <h4 class="fw-bold mb-3">Pesan Loker</h4>
@@ -189,7 +189,7 @@
             <div class="card p-4 d-flex align-items-center justify-content-center" style="min-height:240px;">
                  <p class="text-muted italic">Fitur lainnya akan segera hadir.</p>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 @endsection
